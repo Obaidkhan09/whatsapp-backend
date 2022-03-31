@@ -4,6 +4,9 @@ import cors from 'cors';
 import 'dotenv/config';
 import Pusher from 'pusher';
 import Messages from './schema/messagesSchema.js'
+
+import signUp from "./routes/signUp.js";
+import signIn from "./routes/signIn.js"
 //app Config
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +22,8 @@ const pusher = new Pusher({
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/signUp", signUp);
+app.use("/api/signIn", signIn);
 //DB Config & Listner
 
 mongoose.connect(connection_url)
