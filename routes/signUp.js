@@ -19,12 +19,12 @@ const signUp = async (req, res) => {
     });
     const { error } = schema.validate(req.body);
     if (error) {
-        res.status(422).send(error.details[0].message);
+        return res.status(422).send(error.details[0].message);
     }
     try {
         const temp = await userSchema.findOne({ email: req.body.email });
         if (temp) {
-            res.status(409).send("User Already Exists");
+            return res.status(409).send("User Already Exists");
         }
         const { name, email, password } = req.body;
         let user = new userSchema({

@@ -34,24 +34,24 @@ mongoose.connect(connection_url)
 //Setting-Up changeStream to watch changes in our database
 try {
     const db = mongoose.connection;
-db.once('open', () => {
-    console.log(`DB Connected`);
-    const msgCollection = db.collection("messagescontents");
-    const changeStream = msgCollection.watch();
-    changeStream.on("change", (change) => {
+    db.once('open', () => {
+        console.log(`DB Connected`);
+        const msgCollection = db.collection("messagescontents");
+        const changeStream = msgCollection.watch();
+        changeStream.on("change", (change) => {
 
-        if (change.operationType === 'insert') {
-            const messageDetails = change.fullDocument;
-            pusher.trigger("messages", "inserted", {
-                _id: messageDetails._id,
-                name: messageDetails.name,
-                messages: messageDetails.messages,
-                timeStamp: messageDetails.timeStamp,
-                received: messageDetails.received
-            });
-        }
-    });
-})
+            if (change.operationType === 'insert') {
+                const messageDetails = change.fullDocument;
+                pusher.trigger("messages", "inserted", {
+                    _id: messageDetails._id,
+                    name: messageDetails.name,
+                    messages: messageDetails.messages,
+                    timeStamp: messageDetails.timeStamp,
+                    received: messageDetails.received
+                });
+            }
+        });
+    })
 } catch (error) {
     console.log("Error Triggering Pusher");
 }
