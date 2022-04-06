@@ -4,9 +4,10 @@ import cors from 'cors';
 import 'dotenv/config';
 
 import signUp from "./routes/signUp.js";
-import signIn from "./routes/signIn.js"
-import messagesRoute from "./routes/messages.js"
-import usersRoute from "./routes/user.js"
+import signIn from "./routes/signIn.js";
+import messagesRoute from "./routes/messages.js";
+import usersRoute from "./routes/user.js";
+import chatRoute from "./routes/chat.js";
 //app Config
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +21,7 @@ app.use("/api/signUp", signUp);
 app.use("/api/signIn", signIn);
 app.use("/messages", messagesRoute);
 app.use("/users", usersRoute);
+app.use("/chat", chatRoute);
 //DB Config & Listner
 
 mongoose.connect(connection_url)
