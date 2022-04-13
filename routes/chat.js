@@ -60,7 +60,7 @@ const chatNew = async (req, res) => {
     // console.log(db);
     // console.log(message);
     if (db) {
-        console.log('db',db)
+        // console.log('db',db)
         // console.log('message',message)
         chatSchema.updateOne({ _id: db._id }, { $push: { messages: message } }, { new: true }, (err, updated) => {
             return res.status(200).send(updated);
@@ -83,40 +83,51 @@ const chatNew = async (req, res) => {
 
 const chatSync = (req, res) => {
     const { user1, user2 } = req.query;
-    // console.log(req.query)
+    // console.log("check check check",user1, user2)
     try {
         // {member:{$in:['Obaid','user']}}
         chatSchema.find({ $or: [{ members: [user1, user2] }, { members: [user2, user1] }] }).then((data) => {
             // console.log(data);
-            res.status(200).send(data[0].messages)
+            res.status(200).send(data);
         })
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.status(500).send(error);
     }
 }
 
 const allDocs = async (req, res) => {
-    // const { user1, user2 } = req.query;
-    // const response = await chatSchema.find({ $or: [{ members: [user1, user2] }, { members: [user2, user1] }] }, { members: 1, messages: 1, receiver: 1, sender: 1 });
-    // const data = response.map((items) => {
-    //     const messages = items.messages.splice(-1);
-    //     const members = items.members;
-    //     const sender = items.sender;
-    //     const receiver = items.receiver;
-    //     const _id = items._id;
-    //     return { _id, members, messages, sender, receiver }
-    // })
+
     const { user } = req.query;
     // console.log(req.query)
     try {
         chatSchema.find().then((response) => {
-            const data = response.filter((items) => {
+            let data = response.filter((items) => {
                 if (items.members[0] == user || items.members[1] == user) {
                     // console.log(items.members)
                     return items;
                 }
             });
+            // data.sort((a, b) => new Date(a.timeStamp) > new Date(b.timeStamp ? 1 : -1) )
+            // console.log(data)
+            // const temp =  data.sort((a,b) => (a.messages[a.messages.length - 1].timeStamp < b.messages[b.messages.length - 1].timeStamp) ? -1 : 1 )
+            let temp = {}
+
+            if (data.length >= 2) {
+                for (let i = 0; i < data.length - 1; i++) {
+                    for (let j = 1; j < data.length; j++) {
+                        // console.log('data[j]', data[j].messages)
+                        //      console.log(data[i].messages[data[i].messages.length-1].timeStamp <   data[i + 1].messages[data[i + 1].messages.length-1].timeStamp);
+                        // if(data[j].messages[data[j].length] !== 0 && data[j].messages[0] !=null){}
+                        if (data[i].messages[data[i].messages.length - 1].timeStamp < data[j].messages[data[j].messages.length - 1].timeStamp) {
+                            temp = data[i];
+                            data[i] = data[j];
+                            data[j] = temp;
+                        }
+                    }
+                }
+            }
+            // console.log(dataSort);
             res.status(200).send(data)
         })
     } catch (error) {
