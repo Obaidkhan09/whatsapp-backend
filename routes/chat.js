@@ -26,18 +26,19 @@ try {
                 const messageDetails = change.fullDocument;
                 pusher.trigger("chat", "inserted", {
                     _id: messageDetails._id,
-                    name: messageDetails.name,
+                    members: messageDetails.members,
                     messages: messageDetails.messages,
                     timeStamp: messageDetails.timeStamp,
-                    received: messageDetails.received
+                    sender: messageDetails.sender,
+                    receiver : messageDetails.sender
                 });
+                // console.log(messageDetails);
             }
             // console.log(change.updateDescription.updatedFields[Object.keys(change.updateDescription.updatedFields)[0]])
             if (change.operationType === 'update') {
                 const messageDetails = change.updateDescription.updatedFields[Object.keys(change.updateDescription.updatedFields)[0]];
                 pusher.trigger("chat", "updated", {
                     _id: messageDetails._id,
-                    name: messageDetails.name,
                     message: messageDetails.message,
                     timeStamp: messageDetails.timeStamp,
                     sender: messageDetails.sender
@@ -50,7 +51,7 @@ try {
 }
 
 const chatNew = async (req, res) => {
-    // console.log(req.body)
+    console.log("HEREEEEEEEEE",req.body)
     const data = req.body;
     const user = data.members;
     const message = data.messages;
@@ -74,7 +75,7 @@ const chatNew = async (req, res) => {
                 return res.status(500).send(err);
             }
             else {
-                console.log("res", resp)
+                console.log("response")
                 res.status(200).send(resp);
             }
         });
@@ -117,7 +118,7 @@ const allDocs = async (req, res) => {
                 for (let i = 0; i < data.length - 1; i++) {
                     for (let j = 1; j < data.length; j++) {
                         // console.log('data[j]', data[j].messages)
-                        //      console.log(data[i].messages[data[i].messages.length-1].timeStamp <   data[i + 1].messages[data[i + 1].messages.length-1].timeStamp);
+                        // console.log(data[i].messages[data[i].messages.length-1].timeStamp <   data[i + 1].messages[data[i + 1].messages.length-1].timeStamp);
                         // if(data[j].messages[data[j].length] !== 0 && data[j].messages[0] !=null){}
                         if (data[i].messages[data[i].messages.length - 1].timeStamp < data[j].messages[data[j].messages.length - 1].timeStamp) {
                             temp = data[i];
@@ -134,11 +135,31 @@ const allDocs = async (req, res) => {
         // console.log(error);
         res.status(500).send(error);
     }
-    // res.status(200).send(data);
+}
+
+const deleteDoc = async(req, res) => {
+    const {id} = req.query;
+    console.log(id);
+    try{
+
+        chatSchema.findByIdAndDelete(id, (err, docs)=> {
+            if (err) {
+                console.log("ERR",err);
+            }
+            else{
+                console.log("DOCS",docs);
+            }
+        });
+        res.status(200).send("Success");
+    }
+    catch (error) {
+        res.status(404).send("Not Found");
+    }
 }
 
 router.post("/new", chatNew);
 router.get("/sync", chatSync);
 router.get("/alldocs", allDocs);
+router.delete("/delete", deleteDoc);
 
 export default router;

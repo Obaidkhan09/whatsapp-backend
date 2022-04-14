@@ -5,7 +5,6 @@ import 'dotenv/config';
 
 import signUp from "./routes/signUp.js";
 import signIn from "./routes/signIn.js";
-import messagesRoute from "./routes/messages.js";
 import usersRoute from "./routes/user.js";
 import chatRoute from "./routes/chat.js";
 //app Config
@@ -19,7 +18,6 @@ app.use(express.json());
 
 app.use("/api/signUp", signUp);
 app.use("/api/signIn", signIn);
-app.use("/messages", messagesRoute);
 app.use("/users", usersRoute);
 app.use("/chat", chatRoute);
 //DB Config & Listner
