@@ -30,7 +30,7 @@ try {
                     messages: messageDetails.messages,
                     timeStamp: messageDetails.timeStamp,
                     sender: messageDetails.sender,
-                    receiver : messageDetails.sender
+                    receiver : messageDetails.receiver
                 });
                 // console.log(messageDetails);
             }
