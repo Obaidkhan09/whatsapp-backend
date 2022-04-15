@@ -44,6 +44,12 @@ try {
                     sender: messageDetails.sender
                 });
             }
+            if (change.operationType === 'delete') {
+                pusher.trigger("chat", "deleted", {
+                   result : "success"
+                });
+                // console.log(messageDetails);
+            }
         });
     })
 } catch (error) {
@@ -55,7 +61,7 @@ const chatNew = async (req, res) => {
     const data = req.body;
     const user = data.members;
     const message = data.messages;
-    console.log(user[0], user[1]);
+    // console.log(user[0], user[1]);
 
     const db = await chatSchema.findOne({ $or: [{ members: [user[0], user[1]] }, { members: [user[1], user[0]] }] });
     // console.log(db);
