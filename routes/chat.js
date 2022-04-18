@@ -7,8 +7,8 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 const pusher = new Pusher({
-    appId: "1367256",
-    key: "f184ba8bbbd8b8c5f0c7",
+    appId: `${process.env.REACT_APP_PUSHER_APPID}`,
+    key: `${process.env.REACT_APP_PUSHER_KEY}`,
     secret: `${process.env.REACT_APP_PUSHER_SECRET}`,
     cluster: "ap2",
     useTLS: true
